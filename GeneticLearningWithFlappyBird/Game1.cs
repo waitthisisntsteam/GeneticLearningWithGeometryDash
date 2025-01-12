@@ -12,6 +12,8 @@ namespace GeneticLearningWithGeometryDash
         private GraphicsDeviceManager gfx;
         private SpriteBatch spriteBatch;
 
+        private LearningWrapper LearningWrappers;
+
         private NeuralNetwork[] Networks;
         private ActivationErorrFormulas Formulas;
         private ErrorFunction MeanSquared;
@@ -25,66 +27,6 @@ namespace GeneticLearningWithGeometryDash
         private Rectangle BottomPillar;
 
         private int ticks; //fitness (how many updates have occurred)
-
-        private double NextDouble(Random random, double min, double max) => (random.NextDouble() * (max - min)) + min;
-        public void Mutate(NeuralNetwork network, Random random, double mutationRate)
-        {
-            foreach (Layer layer in network.Layers)
-            {
-                foreach (Neuron neuron in layer.Neurons)
-                {
-                    for (int i = 0; i < neuron.Dendrites.Length; i++)
-                    {
-                        if (random.NextDouble() < mutationRate)
-                        {
-                            if (random.Next(0, 2) == 0) neuron.Dendrites[i].Weight *= NextDouble(random, 0.5, 1.5);
-                            else neuron.Dendrites[i].Weight *= -1;
-                        }
-                    }
-
-                    if (random.NextDouble() < mutationRate)
-                    {
-                        if (random.Next(0, 2) == 0) neuron.Bias *= NextDouble(random, 0.5, 1.5);
-                        else neuron.Bias *= -1;
-                    }
-                }
-            }
-        }
-        public void Crossover(NeuralNetwork winner, NeuralNetwork loser, Random random)
-        {
-            for (int i = 0; i < winner.Layers.Length; i++)
-            {
-                Layer winnerLayer = winner.Layers[i];
-                Layer childLayer = loser.Layers[i];
-
-                int crossoverPoint = random.Next(0, winnerLayer.Neurons.Length);
-                bool flipOrNot = random.Next(0, 2) == 0;
-
-                for (int j = (flipOrNot ? 0 : crossoverPoint); j < (flipOrNot ? crossoverPoint : winnerLayer.Neurons.Length); j++)
-                {
-                    Neuron winnerNeuron = winnerLayer.Neurons[j];
-                    Neuron childNeuron = childLayer.Neurons[j];
-
-                    for (int k = 0; k < winnerNeuron.Dendrites.Length; k++) childNeuron.Dendrites[k].Weight = winnerNeuron.Dendrites[k].Weight;
-                    childNeuron.Bias = winnerNeuron.Bias;
-                }
-            }
-        }
-        public void Train((NeuralNetwork network, double fitness)[] population, Random random, double mutationRate)
-        {
-            Array.Sort(population, (a, b) => b.fitness.CompareTo(a.fitness));
-
-            int start = (int)(population.Length * .1);
-            int end = (int)(population.Length * .9);
-
-            for (int i = start; i < end; i++)
-            {
-                Crossover(population[random.Next(0, start)].network, population[i].network, random);
-                Mutate(population[i].network, random, mutationRate);
-            }
-
-            for (int i = end; i < population.Length; i++) population[i].network.Randomize(new Random(), 0, 1);
-        }
 
         public Game1()
         {
@@ -105,10 +47,13 @@ namespace GeneticLearningWithGeometryDash
                 Networks[i] = new NeuralNetwork([TanH], MeanSquared, [2, 4, 1]);
                 Networks[i].Randomize(new Random(), 0, 1);
             }
+           
+            
+            Wave = new(7, 7,new Point());
 
-
-
-            Wave = new Wave(7, 7);
+            LearningObject[] learners = new LearningObject[100];
+            for (int i = 0; i < learners.Length; i++) learners[i] = new LearningObject(0, Wave, Networks[i]);
+            LearningWrappers = new(learners);
 
             HitBoxes = new List<Rectangle>();
 
@@ -135,8 +80,8 @@ namespace GeneticLearningWithGeometryDash
 
             if (Wave.Alive)
             {
-                if (Wave.Position.Y >= 0 && Keyboard.GetState().IsKeyDown(Keys.Up)) Wave.Up();
-                else if ((Wave.Position.Y + 20) <= GraphicsDevice.Viewport.Height) Wave.Down();
+                //if (Wave.Position.Y >= 0 && Keyboard.GetState().IsKeyDown(Keys.Up)) Wave.Up();
+                //else if ((Wave.Position.Y + 20) <= GraphicsDevice.Viewport.Height) Wave.Down();
 
                 if (Wave.Position.Y <= 0 || Wave.Position.Y + 20 >= GraphicsDevice.Viewport.Height) Wave.Alive = false;
 
@@ -174,7 +119,7 @@ namespace GeneticLearningWithGeometryDash
             GraphicsDevice.Clear(Color.Red);
             spriteBatch.Begin();
 
-            if (Wave.Alive) spriteBatch.DrawRectangle(new RectangleF(Wave.Position.X, Wave.Position.Y, 20, 20), Color.White, 10, 1);
+           // if (Wave.Alive) spriteBatch.DrawRectangle(new RectangleF(Wave.Position.X, Wave.Position.Y, 20, 20), Color.White, 10, 1);
 
             foreach (Rectangle hb in HitBoxes) spriteBatch.FillRectangle(hb, Color.Black, 1);
 
