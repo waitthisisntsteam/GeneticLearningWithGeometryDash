@@ -14,15 +14,22 @@ namespace GeneticLearningWithGeometryDash
         public Wave(int gravity, int speed, Point position)
             : base(gravity, speed, position) { }
 
-        private void Up() => Position.Y -= Speed;
+        public void Up() => Position.Y -= Speed;
 
-        private void Down() => Position.Y += Gravity;
+        public void Down() => Position.Y += Gravity;
 
-        public override void Update(Keys? keyPressed)
+        public override void Update(KeyboardState keyState)
         {
-            if (keyPressed == null) Down();
-            else if (keyPressed == Keys.Up) Up();
+            if (keyState.IsKeyDown(Keys.Up)) Up();
             else Down();
+        }
+
+        public override void Action(double[] array)
+        {
+            if (array[0] < .8)
+                Down();
+            else 
+                Up();
         }
     }
 }

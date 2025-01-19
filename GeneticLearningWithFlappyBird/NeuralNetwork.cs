@@ -36,7 +36,7 @@ namespace GeneticLearningWithGeometryDash
         {
             for (int i = 0; i < Layers[0].Neurons.Length; i++) Layers[0].Neurons[i].Output = inputs[i];
             for (int i = 0; i < Layers.Length - 1; i++) Layers[i].Compute();
-
+            ;
             return Layers[Layers.Length - 1].Compute();
         }
 

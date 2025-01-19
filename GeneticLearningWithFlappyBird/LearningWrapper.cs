@@ -15,8 +15,6 @@ namespace GeneticLearningWithGeometryDash
     {
         public LearningObject[] Population;
 
-       
-
         public LearningWrapper(LearningObject[] learningObject)
         {
             Population = new LearningObject[100];

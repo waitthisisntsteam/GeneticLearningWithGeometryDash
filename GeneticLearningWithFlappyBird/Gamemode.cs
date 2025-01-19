@@ -31,7 +31,7 @@ namespace GeneticLearningWithGeometryDash
             Hitbox.Y = Position.Y;
             return Hitbox;
         }
-
-        public abstract void Update(Keys? keyPressed);
+        public abstract void Action(double[] array);
+        public abstract void Update(KeyboardState keyState);
     }
 }
