@@ -21,7 +21,7 @@ namespace GeneticLearningWithGeometryDash
         private ActivationErorrFormulas Formulas;
         private ErrorFunction MeanSquared;
         private ActivationFunction Activation;
-        Random rand;
+        private Random Rand;
         private Wave Wave;
 
         private List<Rectangle> HitBoxes;
@@ -29,7 +29,10 @@ namespace GeneticLearningWithGeometryDash
         private Rectangle TopPillar;
         private Rectangle BottomPillar;
 
-        KeyboardState state;
+        private KeyboardState state;
+
+        private int PlayersAlive;
+
         public Game1()
         {
             gfx = new GraphicsDeviceManager(this);
@@ -46,7 +49,7 @@ namespace GeneticLearningWithGeometryDash
 
         protected override void LoadContent()
         {
-            rand = new Random(1);
+            Rand = new Random(1);
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Formulas = new ActivationErorrFormulas();
             MeanSquared = new ErrorFunction(Formulas.MeanSquared, Formulas.MeanSquaredD);
@@ -56,7 +59,7 @@ namespace GeneticLearningWithGeometryDash
             for (int i = 0; i < Networks.Length; i++)
             {
                 Networks[i] = new NeuralNetwork([Activation], MeanSquared, 6,4,2,1);
-                Networks[i].Randomize(rand, 0, 1);
+                Networks[i].Randomize(Rand, 0, 1);
             }
 
             LearningObject[] learners = new LearningObject[100];
@@ -70,6 +73,8 @@ namespace GeneticLearningWithGeometryDash
 
             HitBoxes.Add(TopPillar);
             HitBoxes.Add(BottomPillar);
+
+            PlayersAlive = 100;
         }
 
         protected override void Update(GameTime gameTime)
@@ -86,40 +91,66 @@ namespace GeneticLearningWithGeometryDash
             double nearestY1 = HitBoxes[0].Y;
             double nearestY2 = HitBoxes[1].Y;
 
-            ElapsedTime += gameTime.ElapsedGameTime.TotalMilliseconds;
-
-            for (int i = 0; i < LearningWrappers.Population.Length; i++)
+            if (PlayersAlive > 0)
             {
-                if (LearningWrappers.Population[i].Player.Alive)
+                ElapsedTime += gameTime.ElapsedGameTime.TotalMilliseconds;
+
+                for (int i = 0; i < LearningWrappers.Population.Length; i++)
                 {
-                    double distanceFromTop = (LearningWrappers.Population[i].Player.Position.Y); /// 1000000;
-                    double distanceFromBottom = (y - LearningWrappers.Population[i].Player.Position.Y + 15); /// 1000000;
-                    double distanceX1 = (nearestX1 - LearningWrappers.Population[i].Player.Position.X + 15); /// 1000000;
-                    double distanceX2 = (nearestX2 - LearningWrappers.Population[i].Player.Position.X + 15); /// 1000000;
-                    double distanceY1 = (nearestY1 - LearningWrappers.Population[i].Player.Position.Y + 15); /// 1000000;
-                    double distanceY2 = (nearestY2 - LearningWrappers.Population[i].Player.Position.Y + 15); /// 1000000;
-
-                    var result = LearningWrappers.Population[i].Network.Compute([distanceFromTop, distanceFromBottom, distanceX1, distanceX2, distanceY1, distanceY2]);
-                    LearningWrappers.Population[i].Player.Action(result);
-
-                    var test = result[0];
-
-                    Rectangle currentHitbox = LearningWrappers.Population[i].Player.getHitbox();
-                    for (int j = 0; j < HitBoxes.Count; j++)
+                    if (LearningWrappers.Population[i].Player.Alive)
                     {
-                        if (HitBoxes[j].Right <= 0) HitBoxes[j] = new Rectangle(HitBoxes[j].X + 2000, HitBoxes[j].Y, HitBoxes[j].Width, HitBoxes[j].Height);
+                        double distanceFromTop = (LearningWrappers.Population[i].Player.Position.Y); // / 1000000;
+                        double distanceFromBottom = (y - LearningWrappers.Population[i].Player.Position.Y + 15); // / 1000000;
+                        double distanceX1 = (nearestX1 - LearningWrappers.Population[i].Player.Position.X + 15); // / 1000000;
+                        double distanceX2 = (nearestX2 - LearningWrappers.Population[i].Player.Position.X + 15); // / 1000000;
+                        double distanceY1 = (nearestY1 - LearningWrappers.Population[i].Player.Position.Y + 15); // / 1000000;
+                        double distanceY2 = (nearestY2 - LearningWrappers.Population[i].Player.Position.Y + 15); // / 1000000;
 
-                        if (currentHitbox.Intersects(HitBoxes[j]) 
-                            || currentHitbox.Y + 15 >= y 
-                            || currentHitbox.Y <= 0
-                            )
+                        var result = LearningWrappers.Population[i].Network.Compute([distanceFromTop, distanceFromBottom, distanceX1, distanceX2, distanceY1, distanceY2]);
+                        LearningWrappers.Population[i].Player.Action(result);
+
+                        var test = result[0];
+                        ;
+                        Rectangle currentHitbox = LearningWrappers.Population[i].Player.getHitbox();
+                        for (int j = 0; j < HitBoxes.Count; j++)
                         {
-                            LearningWrappers.Population[i].Player.Alive = false;
+                            if (HitBoxes[j].Right <= 0) HitBoxes[j] = new Rectangle(HitBoxes[j].X + 2000, HitBoxes[j].Y, HitBoxes[j].Width, HitBoxes[j].Height);
 
-                            LearningWrappers.Population[i].Fitness += ElapsedTime;
+                            if (currentHitbox.Intersects(HitBoxes[j])
+                                || currentHitbox.Y + 15 >= y
+                                || currentHitbox.Y <= 0
+                                )
+                            {
+                                LearningWrappers.Population[i].Player.Alive = false;
+
+                                LearningWrappers.Population[i].Fitness += ElapsedTime;
+                                PlayersAlive--;
+                            }
                         }
                     }
                 }
+            }
+            else
+            {
+                LearningWrappers.Train(Rand, 1.25);
+                PlayersAlive = 100;
+
+                for (int i = 0; i < LearningWrappers.Population.Length; i++)
+                {
+                    LearningWrappers.Population[i].Player.Position = new Point(0, 225);
+                    LearningWrappers.Population[i].Player.Alive = true;
+                }
+
+
+                HitBoxes.Clear();
+
+                TopPillar = new Rectangle(1500, 0, 500, 150);
+                BottomPillar = new Rectangle(1500, 250, 500, 250);
+
+                HitBoxes.Add(TopPillar);
+                HitBoxes.Add(BottomPillar);
+
+                ElapsedTime = 0;
             }
 
             for (int j = 0; j < HitBoxes.Count; j++) HitBoxes[j] = new Rectangle(HitBoxes[j].X - 5, HitBoxes[j].Y, HitBoxes[j].Width, HitBoxes[j].Height);
@@ -168,10 +199,10 @@ namespace GeneticLearningWithGeometryDash
             {
                 if (LearningWrappers.Population[i].Player.Alive) 
                     spriteBatch.DrawRectangle
-                        (new RectangleF(i * 10, LearningWrappers.Population[i].Player.Position.Y, 15, 15), Color.White, 1, 1);
+                        (new RectangleF(i * 3, LearningWrappers.Population[i].Player.Position.Y, 15, 15), Color.White, 1, 1);
                 else 
                     spriteBatch.DrawRectangle
-                        (new RectangleF(i * 10, LearningWrappers.Population[i].Player.Position.Y, 15, 15), Color.Purple, 1, 1);
+                        (new RectangleF(i * 3, LearningWrappers.Population[i].Player.Position.Y, 15, 15), Color.Purple, 1, 1);
             }
 
             foreach (Rectangle hb in HitBoxes) spriteBatch.FillRectangle(hb, Color.Black, 1);
