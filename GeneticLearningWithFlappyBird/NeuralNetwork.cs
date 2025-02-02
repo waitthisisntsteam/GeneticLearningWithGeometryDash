@@ -29,21 +29,33 @@ namespace GeneticLearningWithGeometryDash
 
         public void Randomize(Random random, double min, double max)
         {
-            for (int i = 0; i < Layers.Length; i++) Layers[i].Randomize(random, min, max);
+            for (int i = 0; i < Layers.Length; i++)
+            {
+                Layers[i].Randomize(random, min, max);
+            }
         }
 
         public double[] Compute(double[] inputs)
         {
-            for (int i = 0; i < Layers[0].Neurons.Length; i++) Layers[0].Neurons[i].Output = inputs[i];
-            for (int i = 0; i < Layers.Length - 1; i++) Layers[i].Compute();
-            ;
+            for (int i = 0; i < Layers[0].Neurons.Length; i++)
+            {
+                Layers[0].Neurons[i].Output = inputs[i];
+            }
+            for (int i = 0; i < Layers.Length - 1; i++)
+            {
+                Layers[i].Compute();
+            }
+            
             return Layers[Layers.Length - 1].Compute();
         }
 
         public double GetError(double[] inputs, double[] desiredOutputs)
         {
             double errorSum = 0;
-            for (int i = 0; i < inputs.Length; i++) errorSum += Error.FunctionFunc(inputs[i], desiredOutputs[i]);
+            for (int i = 0; i < inputs.Length; i++)
+            {
+                errorSum += Error.FunctionFunc(inputs[i], desiredOutputs[i]);
+            }
 
             return errorSum;
         }
