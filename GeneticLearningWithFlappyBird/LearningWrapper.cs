@@ -87,7 +87,7 @@ namespace GeneticLearningWithGeometryDash
         }
         public void Train(Random random, double mutationRate)
         {
-            Array.Sort(Population, (a, b) => b.Fitness.CompareTo(a.Fitness));
+            Array.Sort(Population, (a, b) => b.Fitness.CompareTo(a.Fitness)); //all fitness values remain the same
 
             for (int i = 0; i < Population.Length; i++)
             {

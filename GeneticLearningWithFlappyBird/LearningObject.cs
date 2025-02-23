@@ -18,5 +18,10 @@ namespace GeneticLearningWithGeometryDash
             Player = player;
             Network = neuralNetwork;
         }
+
+        public void SetBestObj()
+        {
+           // Network.Layers[1].Neurons[0].
+        }
     }
 }
