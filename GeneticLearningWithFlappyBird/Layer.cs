@@ -18,20 +18,32 @@ namespace GeneticLearningWithGeometryDash
 
             for (int i = 0; i < Neurons.Length; i++)
             {
-                if (previousLayer != null) Neurons[i] = new Neuron(activation, previousLayer.Neurons);
-                else Neurons[i] = new Neuron(activation, null);
+                if (previousLayer != null)
+                {
+                    Neurons[i] = new Neuron(activation, previousLayer.Neurons);
+                }
+                else
+                {
+                    Neurons[i] = new Neuron(activation, null);
+                }
                 Outputs[i] = Neurons[i].Compute();
             }
         }
 
         public void Randomize(Random random, double min, double max)
         {
-            for (int i = 0; i < Neurons.Length; i++) Neurons[i].Randomize(random, min, max);
+            for (int i = 0; i < Neurons.Length; i++)
+            {
+                Neurons[i].Randomize(random, min, max);
+            }
         }
 
         public double[] Compute()
         {
-            for (int i = 0; i < Neurons.Length; i++) Outputs[i] = Neurons[i].Compute();
+            for (int i = 0; i < Neurons.Length; i++)
+            {
+                Outputs[i] = Neurons[i].Compute();
+            }
 
             return Outputs;
         }

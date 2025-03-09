@@ -8,9 +8,9 @@ namespace GeneticLearningWithGeometryDash
 {
     public class LearningObject
     {
-        public double Fitness;        //fitness based off ticks/time alive, coins collected
+        public double Fitness;
         public Gamemode Player;       
-        public NeuralNetwork Network; //inputs: position of player, position of closest object(s), bounds before death
+        public NeuralNetwork Network;
 
         public LearningObject(double fitness, Gamemode player, NeuralNetwork neuralNetwork)
         {

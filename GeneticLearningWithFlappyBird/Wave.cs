@@ -20,16 +20,26 @@ namespace GeneticLearningWithGeometryDash
 
         public override void Update(KeyboardState keyState)
         {
-            if (keyState.IsKeyDown(Keys.Up)) Up();
-            else Down();
+            if (keyState.IsKeyDown(Keys.Up))
+            {
+                Up();
+            }
+            else
+            {
+                Down();
+            }
         }
 
         public override void Action(double[] array)
         {
-            if (array[0] < .8)
+            if (array[0] < .5)
+            {
                 Down();
-            else 
+            }
+            else
+            {
                 Up();
+            }
         }
     }
 }

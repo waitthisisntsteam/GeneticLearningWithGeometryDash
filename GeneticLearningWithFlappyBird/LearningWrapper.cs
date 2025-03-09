@@ -15,18 +15,14 @@ namespace GeneticLearningWithGeometryDash
     {
         public LearningObject[] Population;
 
-        public LearningWrapper(LearningObject[] learningObject)
-        {
-            Population = new LearningObject[100];
-
-            for (int i = 0; i < learningObject.Length; i++) Population[i] = learningObject[i];
-        }
-
         public LearningWrapper(int count, LearningObject[] learningObject)
         {
             Population = new LearningObject[count];
 
-            for (int i = 0; i < learningObject.Length; i++) Population[i] = learningObject[i];
+            for (int i = 0; i < learningObject.Length; i++)
+            {
+                Population[i] = learningObject[i];
+            }
         }
 
 
@@ -41,15 +37,27 @@ namespace GeneticLearningWithGeometryDash
                     {
                         if (random.NextDouble() < mutationRate)
                         {
-                            if (random.Next(0, 2) == 0) neuron.Dendrites[i].Weight *= NextDouble(random, 0.5, 1.5);
-                            else neuron.Dendrites[i].Weight *= -1;
+                            if (random.Next(0, 2) == 0)
+                            {
+                                neuron.Dendrites[i].Weight *= NextDouble(random, 0, 1);
+                            }
+                            else
+                            {
+                                neuron.Dendrites[i].Weight *= -1;
+                            }
                         }
                     }
 
                     if (random.NextDouble() < mutationRate)
                     {
-                        if (random.Next(0, 2) == 0) neuron.Bias *= NextDouble(random, 0.5, 1.5);
-                        else neuron.Bias *= -1;
+                        if (random.Next(0, 2) == 0)
+                        {
+                            neuron.Bias *= NextDouble(random, 0, 1);
+                        }
+                        else
+                        {
+                            neuron.Bias *= -1;
+                        }
                     }
                 }
             }
@@ -69,7 +77,10 @@ namespace GeneticLearningWithGeometryDash
                     Neuron winnerNeuron = winnerLayer.Neurons[j];
                     Neuron childNeuron = childLayer.Neurons[j];
 
-                    for (int k = 0; k < winnerNeuron.Dendrites.Length; k++) childNeuron.Dendrites[k].Weight = winnerNeuron.Dendrites[k].Weight;
+                    for (int k = 0; k < winnerNeuron.Dendrites.Length; k++)
+                    {
+                        childNeuron.Dendrites[k].Weight = winnerNeuron.Dendrites[k].Weight;
+                    }
                     childNeuron.Bias = winnerNeuron.Bias;
                 }
             }
@@ -89,7 +100,10 @@ namespace GeneticLearningWithGeometryDash
                     Mutate(Population[j].Network, random, mutationRate);
                 }
 
-                for (int j = end; j < Population.Length; j++) Population[j].Network.Randomize(new Random(), 0, 1);
+                for (int j = end; j < Population.Length; j++)
+                {
+                    Population[j].Network.Randomize(new Random(), 0, 1);
+                }
             }
         }
     }

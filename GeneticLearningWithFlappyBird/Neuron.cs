@@ -40,14 +40,24 @@ namespace GeneticLearningWithGeometryDash
 
         public void Randomize(Random random, double min, double max)
         {
-            for (int i = 0; i < Dendrites.Length; i++) Dendrites[i].Weight = (random.NextDouble() * (max - min)) + min;
+            for (int i = 0; i < Dendrites.Length; i++)
+            {
+                Dendrites[i].Weight = (random.NextDouble() * (max - min)) + min;
+            }
             Bias = (random.NextDouble() * (max - min)) + min;
         }
 
         public double Compute()
         {
-            double input = 0; 
-            if (Dendrites != null) for (int i = 0; i < Dendrites.Length; i++) input += Dendrites[i].Compute();
+            double input = 0;
+            if (Dendrites != null)
+            {
+                for (int i = 0; i < Dendrites.Length; i++)
+                {
+                    input += Dendrites[i].Compute();
+                }
+            }
+
             input += Bias;
             Input = input;
             Output = Activation.FunctionFunc(input);
