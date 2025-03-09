@@ -51,7 +51,7 @@ namespace GeneticLearningWithGeometryDash
         protected override void LoadContent()
         {
             PopulationCount = 500;
-            InputCount = 4;
+            InputCount = 6;
 
             Rand = new Random(1);
             spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -122,37 +122,45 @@ namespace GeneticLearningWithGeometryDash
                                 double distanceFromTop = (LearningWrappers.Population[i].Player.Position.Y);
                                 double distanceFromBottom = (y - LearningWrappers.Population[i].Player.Position.Y + LearningWrappers.Population[i].Player.Hitbox.Height);
                                 
-                                //double distanceX1 = (nearestX1 - LearningWrappers.Population[i].Player.Position.X + LearningWrappers.Population[i].Player.Hitbox.Width);
-                                //double distanceX2 = (nearestX2 - LearningWrappers.Population[i].Player.Position.X + LearningWrappers.Population[i].Player.Hitbox.Width);
-                                //double distanceY1 = (nearestY1 - LearningWrappers.Population[i].Player.Position.Y + LearningWrappers.Population[i].Player.Hitbox.Height);
-                                //double distanceY2 = (nearestY2 - LearningWrappers.Population[i].Player.Position.Y + LearningWrappers.Population[i].Player.Hitbox.Height);
+                                double distanceX1 = (nearestX1 - LearningWrappers.Population[i].Player.Position.X + LearningWrappers.Population[i].Player.Hitbox.Width);
+                                double distanceX2 = (nearestX2 - LearningWrappers.Population[i].Player.Position.X + LearningWrappers.Population[i].Player.Hitbox.Width);
+                                double distanceY1 = (nearestY1 - LearningWrappers.Population[i].Player.Position.Y + LearningWrappers.Population[i].Player.Hitbox.Height);
+                                double distanceY2 = (nearestY2 - LearningWrappers.Population[i].Player.Position.Y + LearningWrappers.Population[i].Player.Hitbox.Height);
 
-                                double distanceFromCenterOfGapX = CenterOfGap.X;
-                                double distanceFromCenterOfGapY = CenterOfGap.Y;
+                                //double distanceFromCenterOfGapX = CenterOfGap.X;
+                                //double distanceFromCenterOfGapY = CenterOfGap.Y;
 
                                 //Act From Environment
-                                //var result = LearningWrappers.Population[i].Network.Compute([distanceFromTop, distanceFromBottom, nearestX1, nearestY1, nearestX2, nearestY2]);
-                                var result = LearningWrappers.Population[i].Network.Compute([distanceFromTop, distanceFromBottom, distanceFromCenterOfGapX, distanceFromCenterOfGapY]);
+                                var result = LearningWrappers.Population[i].Network.Compute([distanceFromTop, distanceFromBottom, nearestX1, nearestY1, nearestX2, nearestY2]);
+                                //var result = LearningWrappers.Population[i].Network.Compute([distanceFromTop, distanceFromBottom, distanceFromCenterOfGapX, distanceFromCenterOfGapY]);
 
                                 LearningWrappers.Population[i].Player.Action(result);
 
                                 //Check Player's State
                                 Rectangle currentHitbox = LearningWrappers.Population[i].Player.getHitbox();
 
-                                bool reset = false;
+                                //bool reset = false;
                                 for (int j = 0; j < HitBoxes.Count; j++)
                                 {
                                     //Reset Environment
-                                    if (!reset && HitBoxes[j].Right <= 0)
+                                    if (/*!reset && */HitBoxes[j].Right <= 0)
                                     {
                                         //HitBoxes[j] = new Rectangle(HitBoxes[j].X + 1200, Rand.Next(0, GraphicsDevice.Viewport.Height), HitBoxes[j].Width, HitBoxes[j].Height);
 
-                                        CenterOfGap.Y = Rand.Next(100, GraphicsDevice.Viewport.Height - 200);
-                                        TopPillar = new Rectangle(500, CenterOfGap.Y - 350, 500, 250);
-                                        BottomPillar = new Rectangle(500, CenterOfGap.Y + 100, 500, 250);
-                                        CenterOfGap.X = 500;
+                                        HitBoxes[0] = new Rectangle(500, CenterOfGap.Y - 325, 500, 250);
+                                        HitBoxes[1] = new Rectangle(500, CenterOfGap.Y + 75, 500, 250);
 
-                                        reset = true;
+                                        break;
+
+                                        //CenterOfGap.Y = Rand.Next(100, GraphicsDevice.Viewport.Height - 200);
+                                        //TopPillar = new Rectangle(500, CenterOfGap.Y - 350, 500, 250);
+                                        //BottomPillar = new Rectangle(500, CenterOfGap.Y + 100, 500, 250);
+                                        //CenterOfGap.X = 500;
+
+                                        //TopPillar = new Rectangle(500, 0, 500, 250);
+                                        //BottomPillar = new Rectangle(500, 250, 500, 250);
+
+                                        //reset = true;
                                     }
 
                                     //If Player Dies
@@ -190,6 +198,10 @@ namespace GeneticLearningWithGeometryDash
 
                         TopPillar = new Rectangle(500, CenterOfGap.Y - 350, 500, 250);
                         BottomPillar = new Rectangle(500, CenterOfGap.Y + 100, 500, 250);
+
+
+                        //TopPillar = new Rectangle(500, 0, 500, 250);
+                        //BottomPillar = new Rectangle(500, 250, 500, 250);
 
                         HitBoxes.Add(TopPillar);
                         HitBoxes.Add(BottomPillar);
