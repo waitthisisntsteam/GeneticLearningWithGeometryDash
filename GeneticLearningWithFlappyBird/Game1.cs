@@ -39,8 +39,6 @@ namespace GeneticLearningWithGeometryDash
         
         protected override void Initialize()
         {
-            
-
             base.Initialize();
         }
 
