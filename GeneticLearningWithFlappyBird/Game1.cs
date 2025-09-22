@@ -45,15 +45,21 @@ namespace GeneticLearningWithGeometryDash
         
         protected override void Initialize()
         {
+            gfx.IsFullScreen = false;
+            gfx.PreferredBackBufferWidth = 800;
+            gfx.PreferredBackBufferHeight = 600;
+            gfx.ApplyChanges();
+
+
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
-            PopulationCount = 500;
+            PopulationCount = 150;
             InputCount = 6;
 
-            Rand = new Random(1);
+            Rand = new Random(3);
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             Formulas = new ActivationErorrFormulas();
@@ -139,32 +145,21 @@ namespace GeneticLearningWithGeometryDash
                                 //Check Player's State
                                 Rectangle currentHitbox = LearningWrappers.Population[i].Player.getHitbox();
 
-                                //bool reset = false;
                                 for (int j = 0; j < HitBoxes.Count; j++)
                                 {
                                     //Reset Environment
-                                    if (/*!reset && */HitBoxes[j].Right <= 0)
+                                    if (HitBoxes[j].Right <= 0)
                                     {
                                         //HitBoxes[j] = new Rectangle(HitBoxes[j].X + 1200, Rand.Next(0, GraphicsDevice.Viewport.Height), HitBoxes[j].Width, HitBoxes[j].Height);
 
-                                        HitBoxes[0] = new Rectangle(500, CenterOfGap.Y - 325, 500, 250);
-                                        HitBoxes[1] = new Rectangle(500, CenterOfGap.Y + 75, 500, 250);
+                                        HitBoxes[0] = new Rectangle(Rand.Next(450, 550), 0, 500, Rand.Next(50, CenterOfGap.Y + 50));
+                                        HitBoxes[1] = new Rectangle(Rand.Next(450, 550), Rand.Next(CenterOfGap.Y + 50, CenterOfGap.Y + 250), 500, 500);
 
                                         break;
-
-                                        //CenterOfGap.Y = Rand.Next(100, GraphicsDevice.Viewport.Height - 200);
-                                        //TopPillar = new Rectangle(500, CenterOfGap.Y - 350, 500, 250);
-                                        //BottomPillar = new Rectangle(500, CenterOfGap.Y + 100, 500, 250);
-                                        //CenterOfGap.X = 500;
-
-                                        //TopPillar = new Rectangle(500, 0, 500, 250);
-                                        //BottomPillar = new Rectangle(500, 250, 500, 250);
-
-                                        //reset = true;
                                     }
 
                                     //If Player Dies
-                                    if (LearningWrappers.Population[i].Player.Alive&&(currentHitbox.Intersects(HitBoxes[j])
+                                    if (LearningWrappers.Population[i].Player.Alive && (currentHitbox.Intersects(HitBoxes[j])
                                         || currentHitbox.Y + LearningWrappers.Population[i].Player.Hitbox.Height >= y
                                         || currentHitbox.Y <= 0)
                                         )
@@ -196,12 +191,8 @@ namespace GeneticLearningWithGeometryDash
 
                         HitBoxes.Clear();
 
-                        TopPillar = new Rectangle(500, CenterOfGap.Y - 350, 500, 250);
-                        BottomPillar = new Rectangle(500, CenterOfGap.Y + 100, 500, 250);
-
-
-                        //TopPillar = new Rectangle(500, 0, 500, 250);
-                        //BottomPillar = new Rectangle(500, 250, 500, 250);
+                        TopPillar = new Rectangle(Rand.Next(450, 550), 0, 500, Rand.Next(50, CenterOfGap.Y + 50));
+                        BottomPillar = new Rectangle(Rand.Next(450, 550), Rand.Next(CenterOfGap.Y + 50, CenterOfGap.Y + 250), 500, 500);
 
                         HitBoxes.Add(TopPillar);
                         HitBoxes.Add(BottomPillar);
